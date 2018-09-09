@@ -47,8 +47,8 @@ module Coverband
         files.each_with_object({}) do |(file, lines), filtered_file_hash|
           # first time we see a file, we pre-init the in memory cache to whatever is in store(redis)
           line_cache = line_cache(file) 
-          lines.reject! do |line|
-            line_cache.include?(line) ? true : (line_cache << line && false)
+          lines.reject! do |line, value|
+            value ==0 || line_cache.include?(line) ? true : (line_cache << line && false)
           end
           filtered_file_hash[file] = lines if lines.any?
         end

@@ -12,20 +12,28 @@ module Coverband
 
     def data
       {
+        'file1' => { 1=>0, 2=> 0, 3 => 1, 4 => 0, 5 => 2 },
+        'file2' => { 1 => 1, 2 => 1 }
+      }
+    end
+
+    def data_excluding_uncovered_lines
+      {
         'file1' => { 3 => 1, 5 => 2 },
         'file2' => { 1 => 1, 2 => 1 }
       }
     end
 
-    test 'it passes data into store' do
-      @store.expects(:save_report).with data
+    test 'it passes data into store excluding uncovered lines' do
+      @store.expects(:save_report).with(data_excluding_uncovered_lines)
       @store.expects(:covered_lines_for_file).with('file1').returns({})
       @store.expects(:covered_lines_for_file).with('file2').returns({})
       @memory_store.save_report data
     end
 
+
     test 'it passes data into store only once' do
-      @store.expects(:save_report).once.with data
+      @store.expects(:save_report).with(data_excluding_uncovered_lines)
       @store.expects(:covered_lines_for_file).with('file1').returns({})
       @store.expects(:covered_lines_for_file).with('file2').returns({})
       2.times { @memory_store.save_report data }
@@ -38,7 +46,7 @@ module Coverband
       }
       @store.expects(:covered_lines_for_file).with('file1').returns({})
       @store.expects(:covered_lines_for_file).with('file2').returns({})
-      @store.expects(:save_report).once.with data
+      @store.expects(:save_report).once.with(data_excluding_uncovered_lines)
       @store.expects(:save_report).once.with(
         'file1' => { 10 => 1 }
       )
