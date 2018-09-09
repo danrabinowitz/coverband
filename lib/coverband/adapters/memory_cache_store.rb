@@ -37,10 +37,16 @@ module Coverband
         self.class.files_cache
       end
 
+      def line_cache(file)
+        files_cache[file] ||= Set.new(store.covered_lines_for_file(file).select do |_, line_number|
+          line_number != '0'
+        end.keys.map(&:to_i))
+      end
+
       def filter(files)
         files.each_with_object({}) do |(file, lines), filtered_file_hash|
           # first time we see a file, we pre-init the in memory cache to whatever is in store(redis)
-          line_cache = files_cache[file] ||= Set.new(store.covered_lines_for_file(file))
+          line_cache = line_cache(file) 
           lines.reject! do |line|
             line_cache.include?(line) ? true : (line_cache << line && false)
           end

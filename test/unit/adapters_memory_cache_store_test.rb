@@ -48,7 +48,7 @@ module Coverband
 
     test 'it initializes cache with what is in store' do
       @store.expects(:covered_lines_for_file).with('file1').returns({ '3' => '1', '5' => '1' })
-      @store.expects(:covered_lines_for_file).with('file2').returns({ '2' => '1' })
+      @store.expects(:covered_lines_for_file).with('file2').returns({ '1' => '0', '2' => '1' })
       @store.expects(:save_report).with('file2' => { 1 => 1 })
       @memory_store.save_report data
     end
